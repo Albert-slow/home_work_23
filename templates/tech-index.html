@@ -55,12 +55,12 @@
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <a class="navbar-brand" href="tech-index.html"><img src="images/version/tech-logo.png" alt=""></a>
+                    <a class="navbar-brand" href="/"><img src="#" alt=""></a>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
                                 <a class="nav-link" href="/">Home</a>
-                            </li
+                            </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                                    aria-expanded="false">Categories <span class="caret"></span></a>
@@ -84,9 +84,10 @@
                                 {% if user.is_authenticated %}
                                     <a class="nav-link" href="/logout"><i class="fa fa-commenting-o"></i>Logout {{ user.username }}</a>
                                 {% else %}
-                                    <a href="/login"><i class="fa fa-commenting-o"></i> Login</a>
+                                    <a class="nav-link" href="/login"><i class="fa fa-commenting-o"></i> Login</a>
                                 {% endif %}
                             </li>
+
                             <li>
                                 <form action="search_results" method="post" class="form-inline my-2 my-lg-0">
                                     {% csrf_token %}
@@ -112,12 +113,13 @@
                             </div><!-- end blog-top -->
 
                             <div class="blog-list clearfix">
-                                {% for article in articles %}
+                            {% for article in articles %}
+                                {% if article in page_obj %}
                                     <div class="blog-box row">
                                         <div class="col-md-4">
                                             <div class="post-media">
                                                 <a href="{% url 'article' article.id %}" title="">
-                                                    <img src="{{ object.article_image.url }}" alt="photo" class="img-fluid">
+                                                    <img src="{{ article.article_image.url }}" alt="photo" class="img-fluid">
                                                     <div class="hovereffect"></div>
                                                 </a>
                                             </div><!-- end media -->
@@ -126,12 +128,13 @@
                                         <div class="blog-meta big-meta col-md-8">
                                             <h4><a href="{% url 'article' article.id %}" title="">{{ article.article_title }}</a></h4>
                                             <p>{{ article.article_news }}</p>
-                                            <small class="firstsmall"><a class="bg-orange" href="{{ category.id }}" title="">{{ article.article_categories }}</a></small>
+                                            <small class="firstsmall"><a class="bg-orange" href="category/{{ article.article_categories.id }}" title="">{{ article.article_categories }}</a></small>
                                             <small><a href="" title="">{{ article.article_created_at }}</a></small>
                                             <small><a href="" title="">{{ article.article_author }}</a></small>
                                         </div><!-- end meta -->
                                     </div><!-- end blog-box -->
-                                {% endfor %}
+                                {% endif %}
+                            {% endfor %}
 
                                 <hr class="invis">
 
@@ -142,16 +145,23 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-start">
-                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">Next</a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                <div class="pagination">
+                                    <span class="step-links">
+                                        {% if page_obj.has_previous %}
+                                            <a href="?page=1">&laquo; first</a>
+                                            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                        {% endif %}
+
+                                        <span class="current">
+                                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                        </span>
+
+                                        {% if page_obj.has_next %}
+                                            <a href="?page={{ page_obj.next_page_number }}">next</a>
+                                            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                                        {% endif %}
+                                    </span>
+                                </div>
                             </div><!-- end col -->
                         </div><!-- end row -->
                     </div><!-- end col -->
@@ -171,7 +181,23 @@
                                 <div class="trend-videos">
                                     <div class="blog-box">
                                         <div class="post-media">
-                                            <a href="tech-single.html" title="">
+                                            <a href="/" title="">
+                                                <img src="media/article_images/cafa975a9e1b5df0ffc5fd75f36aeaeb.jpg" alt="" class="img-fluid">
+                                                <div class="hovereffect">
+                                                    <span class="videohover"></span>
+                                                </div><!-- end hover -->
+                                            </a>
+                                        </div><!-- end media -->
+                                        <div class="blog-meta">
+                                            <h4><a href="/" title="">We prepared the best 10 laptop presentations for you</a></h4>
+                                        </div><!-- end meta -->
+                                    </div><!-- end blog-box -->
+
+                                    <hr class="invis">
+
+                                    <div class="blog-box">
+                                        <div class="post-media">
+                                            <a href="/" title="">
                                                 <img src="media/article_images/news.jpg" alt="" class="img-fluid">
                                                 <div class="hovereffect">
                                                     <span class="videohover"></span>
@@ -179,7 +205,7 @@
                                             </a>
                                         </div><!-- end media -->
                                         <div class="blog-meta">
-                                            <h4><a href="tech-single.html" title="">We prepared the best 10 laptop presentations for you</a></h4>
+                                            <h4><a href="/" title="">We are guests of ABC Design Studio - Vlog</a></h4>
                                         </div><!-- end meta -->
                                     </div><!-- end blog-box -->
 
@@ -188,30 +214,14 @@
                                     <div class="blog-box">
                                         <div class="post-media">
                                             <a href="tech-single.html" title="">
-                                                <img src="media/article_images/news.jpg" alt="" class="img-fluid">
+                                                <img src="media/article_images/oltktusuyjasjkhpvmfowvrd_zo.jpeg" alt="" class="img-fluid">
                                                 <div class="hovereffect">
                                                     <span class="videohover"></span>
                                                 </div><!-- end hover -->
                                             </a>
                                         </div><!-- end media -->
                                         <div class="blog-meta">
-                                            <h4><a href="tech-single.html" title="">We are guests of ABC Design Studio - Vlog</a></h4>
-                                        </div><!-- end meta -->
-                                    </div><!-- end blog-box -->
-
-                                    <hr class="invis">
-
-                                    <div class="blog-box">
-                                        <div class="post-media">
-                                            <a href="tech-single.html" title="">
-                                                <img src="media/article_images/news.jpg" alt="" class="img-fluid">
-                                                <div class="hovereffect">
-                                                    <span class="videohover"></span>
-                                                </div><!-- end hover -->
-                                            </a>
-                                        </div><!-- end media -->
-                                        <div class="blog-meta">
-                                            <h4><a href="tech-single.html" title="">Both blood pressure monitor and intelligent clock</a></h4>
+                                            <h4><a href="/" title="">Both blood pressure monitor and intelligent clock</a></h4>
                                         </div><!-- end meta -->
                                     </div><!-- end blog-box -->
                                 </div><!-- end videos -->
@@ -221,15 +231,15 @@
                                 <h2 class="widget-title">Popular Posts</h2>
                                 <div class="blog-list-widget">
                                     <div class="list-group">
-                                        <a href="tech-single.html" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <a href="/" class="list-group-item list-group-item-action flex-column align-items-start">
                                             <div class="w-100 justify-content-between">
-                                                <img src="media/article_images/news.jpg" alt="" class="img-fluid float-left">
+                                                <img src="media/article_images/oltktusuyjasjkhpvmfowvrd_zo.jpeg" alt="" class="img-fluid float-left">
                                                 <h5 class="mb-1">5 Beautiful buildings you need..</h5>
                                                 <small>12 Jan, 2016</small>
                                             </div>
                                         </a>
 
-                                        <a href="tech-single.html" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <a href="/" class="list-group-item list-group-item-action flex-column align-items-start">
                                             <div class="w-100 justify-content-between">
                                                 <img src="media/article_images/news.jpg" alt="" class="img-fluid float-left">
                                                 <h5 class="mb-1">Let's make an introduction for..</h5>
@@ -237,9 +247,9 @@
                                             </div>
                                         </a>
 
-                                        <a href="tech-single.html" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <a href="/" class="list-group-item list-group-item-action flex-column align-items-start">
                                             <div class="w-100 last-item justify-content-between">
-                                                <img src="media/article_images/news.jpg" alt="" class="img-fluid float-left">
+                                                <img src="media/article_images/c33922fc581fbd69153c84e06b391842_H58WmLo.jpg" alt="" class="img-fluid float-left">
                                                 <h5 class="mb-1">Did you see the most beautiful..</h5>
                                                 <small>07 Jan, 2016</small>
                                             </div>
@@ -252,7 +262,7 @@
                                 <h2 class="widget-title">Recent Reviews</h2>
                                 <div class="blog-list-widget">
                                     <div class="list-group">
-                                        <a href="tech-single.html" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <a href="/" class="list-group-item list-group-item-action flex-column align-items-start">
                                             <div class="w-100 justify-content-between">
                                                 <img src="media/article_images/news.jpg" alt="" class="img-fluid float-left">
                                                 <h5 class="mb-1">Banana-chip chocolate cake recipe..</h5>
@@ -266,7 +276,7 @@
                                             </div>
                                         </a>
 
-                                        <a href="tech-single.html" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <a href="/" class="list-group-item list-group-item-action flex-column align-items-start">
                                             <div class="w-100 justify-content-between">
                                                 <img src="media/article_images/news.jpg" alt="" class="img-fluid float-left">
                                                 <h5 class="mb-1">10 practical ways to choose organic..</h5>
@@ -316,7 +326,7 @@
                     <div class="col-lg-7">
                         <div class="widget">
                             <div class="footer-text text-left">
-                                <a href="tech-index.html"><img src="media/article_images/oltktusuyjasjkhpvmfowvrd_zo.jpeg" alt="" class="img-fluid"></a>
+                                <a href="/"><img src="media/article_images/oltktusuyjasjkhpvmfowvrd_zo.jpeg" alt="" class="img-fluid"></a>
                                 <p>Albert's news site is a technology blog, we are sharing marketing, news and gadget articles.</p>
                                 <div class="social">
                                     <a href="https://t.me/albert_mavlikaev" data-toggle="tooltip" data-placement="bottom" title="Telegram"><i class="fa fa-telegram"></i></a>

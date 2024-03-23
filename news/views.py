@@ -4,16 +4,21 @@ from django.contrib.auth import logout
 from news.forms import NewsForm, SearchForm
 from news.models import ArticleModel, CategoryModel, TagModel
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView, ListView
 
 
-# получение данных из бд
-def home_page(request):
-    categories = CategoryModel.objects.all()
-    articles = ArticleModel.objects.all()
-    form = SearchForm
-    context = {"categories": categories, "articles": articles, "form": form}
-    return render(request, template_name="tech-index.html", context=context)
+class HomePage(ListView):
+    form_class = NewsForm, SearchForm
+    template_name = 'tech-index.html'
+    model = ArticleModel
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = CategoryModel.objects.all()
+        context["articles"] = ArticleModel.objects.all()
+        return context
+
 
 
 def search_results(request):
